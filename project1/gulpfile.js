@@ -4,7 +4,7 @@ var uglify = require("gulp-uglify");
 var watchPath = require("gulp-watch-path");
 var combiner = require("stream-combiner2");
 var sourcemaps = require('gulp-sourcemaps');
-
+var rename = require("gulp-rename");
 
 
 var handleError = function (err) {
@@ -32,14 +32,26 @@ gulp.task("uglify",function(){
 
 gulp.task("watchjs",function(){
     gulp.watch("src/js/**/*.js", function (event) {
+        console.log(event);
+
+/*        { type: 'changed',
+            path: 'F:\\notes\\gulp_demos\\project1\\src\\js\\log.js' }*/
 
         var paths = watchPath(event,"src/","dist/");
-        //console.log(paths);
-        //gutil.log(gutil.colors.green(event.type)+" "+paths.srcPath);
+        console.log(paths);
+
+/*        { srcFilename: 'log.js',
+            distFilename: 'log.js',
+            srcPath: 'src\\js\\log.js',
+            srcDir: 'src\\js',
+            distPath: 'dist\\js\\log.js',
+            distDir: 'dist\\js' }*/
+
         var combined = combiner.obj([
             gulp.src(paths.srcPath),
             sourcemaps.init(),
             uglify(),
+            //rename({suffix:".min"}),
             sourcemaps.write("./"),
              gulp.dest(paths.distDir)
         ])
@@ -47,6 +59,21 @@ gulp.task("watchjs",function(){
 
     })
 })
+
+gulp.task("rename",function(){
+    gulp.watch("src/js/**/*.js", function (event) {
+        var paths = watchPath(event,"src/","dist/");
+        var combined = combiner.obj([
+            gulp.src(paths.srcPath),
+            uglify(),
+            rename({suffix:".min"}),
+            gulp.dest(paths.distDir)
+        ])
+        combined.on("error",handleError)
+
+    })
+})
+
 
 /*
 gulp.task("default",function(){
@@ -56,4 +83,4 @@ gulp.task("default",function(){
 
 
 
- gulp.task("default", ["watchjs"]);
+ gulp.task("default", ["watchjs","rename"]);

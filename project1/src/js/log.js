@@ -4,4 +4,4 @@ var log = function (msg) {
     console.log('--------');
 }
 log({a:1})
-//log('gulp-book') ;
+log('gulp-book') ;

@@ -185,6 +185,41 @@ gulp.task("default",function(){
 运行任务，命令行输入 gulp，即可查看编译的文件 加了前缀。
 
 
+5. 针对使用 stream 方式编写插件的几个注意点
+
+- 执行默认任务，命令行输入： gulp，出现错误：   
+  TypeError: Cannot read property 'apply' of undefined   
+  解决方案是全局安装下gulp-cli:     
+  npm i gulp-cli -g      
+  
+- 再次执行默认任务，命令行输入： gulp，命令行又出现以下提示：
+
+```
+Using gulpfile E:\qinpmc\note\gulp\plugin2\gulpfile.js
+[21:51:30] Starting 'default'...
+[21:51:30] The following tasks did not complete: default
+[21:51:30] Did you forget to signal async completion?
+```
+
+
+修改gulpfile.js,改为异步的
+
+```
+//原始：
+gulp.task("default",function{
+    gulp.src("src/*.js" ,{buffer:false})
+        .pipe(prefix("prefix data-----"))
+        .pipe(gulp.dest("dist/js"));
+})
+
+//改为：
+gulp.task("default",async() =>{
+    gulp.src("src/*.js" ,{buffer:false})
+        .pipe(prefix("prefix data-----"))
+        .pipe(gulp.dest("dist/js"));
+})
+
+```
 
 
 

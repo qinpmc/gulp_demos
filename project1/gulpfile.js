@@ -5,6 +5,13 @@ var watchPath = require("gulp-watch-path");
 var combiner = require("stream-combiner2");
 var sourcemaps = require('gulp-sourcemaps');
 var rename = require("gulp-rename");
+var less = require('gulp-less');
+var minifycss = require('gulp-minify-css');
+var autoprefixer = require('autoprefixer');
+var imagemin = require('gulp-imagemin');
+var sass = require('gulp-ruby-sass');
+
+
 
 
 var handleError = function (err) {
@@ -104,10 +111,76 @@ gulp.task('watchcss', function () {
 })*/
 
 
+gulp.task('watchless', function () {
+    gulp.watch('src/less/**/*.less', function (event) {
+        var paths = watchPath(event, 'src/less/', 'dist/css/')
+
+		gutil.log(gutil.colors.green(event.type) + ' ' + paths.srcPath)
+        gutil.log('Dist ' + paths.distPath)
+        var combined = combiner.obj([
+            gulp.src(paths.srcPath),
+            sourcemaps.init(),
+            autoprefixer({
+              browsers: 'last 2 versions'
+            }),
+            less(),
+            minifycss(),
+            sourcemaps.write('./'),
+            gulp.dest(paths.distDir)
+        ])
+        combined.on('error', handleError)
+    })
+})
+
+gulp.task('watchsass',function () {
+    gulp.watch('src/sass/**/*', function (event) {
+        var paths = watchPath(event, 'src/sass/', 'dist/css/')
+
+		gutil.log(gutil.colors.green(event.type) + ' ' + paths.srcPath)
+        gutil.log('Dist ' + paths.distPath)
+        sass(paths.srcPath)
+            .on('error', function (err) {
+                console.error('Error!', err.message);
+            })
+            .pipe(sourcemaps.init())
+            .pipe(minifycss())
+            .pipe(autoprefixer({
+              browsers: 'last 2 versions'
+            }))
+            .pipe(sourcemaps.write('./'))
+            .pipe(gulp.dest(paths.distDir))
+    })
+});
+
+
+gulp.task('watchimage', function () {
+    gulp.watch('src/images/**/*', function (event) {
+        var paths = watchPath(event,'src/','dist/')
+
+		gutil.log(gutil.colors.green(event.type) + ' ' + paths.srcPath)
+        gutil.log('Dist ' + paths.distPath)
+
+        gulp.src(paths.srcPath)
+            .pipe(imagemin({
+                progressive: true
+            }))
+            .pipe(gulp.dest(paths.distDir))
+    })
+});
+
+
+gulp.task('watchcopy', function () {
+    gulp.watch('src/fonts/**/*', function (event) {
+        var paths = watchPath(event)
+
+		gutil.log(gutil.colors.green(event.type) + ' ' + paths.srcPath)
+        gutil.log('Dist ' + paths.distPath)
+
+        gulp.src(paths.srcPath)
+            .pipe(gulp.dest(paths.distDir))
+    })
+});
 
 
 
-
-
-
- gulp.task("default", ["watchjs","rename"]);
+gulp.task('default', ['watchjs', 'watchcss', 'watchless', 'watchsass', 'watchimage', 'watchcopy']);

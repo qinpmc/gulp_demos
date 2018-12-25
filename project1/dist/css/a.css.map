@@ -1,0 +1,1 @@
+{"version":3,"sources":["a.css"],"names":[],"mappings":"AAAA,OACI,MAAM,KAEV,SACI,MAAM,IACT,WAAW","file":"a.css","sourcesContent":["body a{\r\n    color:pink;\r\n}\r\nbody div{\r\n    color:red;\r\n\tbackground:yellow;\r\n}"]}

@@ -55,6 +55,14 @@ var log=function(o){console.log("--------"),console.log(o),console.log("--------
 
 ```
 
+watchPath(event, search, replace, distExt)参数含义：
+event	gulp.watch 回调函数的 event
+search	需要被替换的起始字符串
+replace	第三个参数是新的的字符串
+distExt	扩展名(非必填)
+
+
+
 **sourcemaps 的使用**
 
 谷歌浏览器中，打开开发者面板，点击右上角的设置。

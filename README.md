@@ -111,6 +111,24 @@ gulp.task('default', ['script', 'auto'])
 （gulp auto，运行  auto 任务，自动监听 js/*.js 文件的修改后压缩js）。
 
 
+### 注意gulp3 与gulp4 区别
+
+（https://juejin.im/entry/582d47dca0bb9f0067a67039）
+（https://gist.github.com/jeromecoupe/0b807b0c1050647eb340360902c3203a）
+
+```
+gulp3 写法
+gulp.task('styles', ['clean'], function() {...});
+
+gulp4 写法
+gulp.task('scripts', gulp.series('clean', function() {...}));
+
+gulp.task('default', gulp.parallel('scripts', 'styles'));
+
+// default 依赖于 scripts 与 styles
+gulp.task('default', gulp.series('clean', gulp.parallel('scripts', 'styles')));
+```
+
 
 ## 编写插件
 

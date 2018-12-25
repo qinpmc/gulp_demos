@@ -53,7 +53,7 @@ gulp.task("watchjs",function(){
             uglify(),
             //rename({suffix:".min"}),
             sourcemaps.write("./"),
-             gulp.dest(paths.distDir)
+            gulp.dest(paths.distDir)
         ])
         combined.on("error",handleError)
 
@@ -74,11 +74,38 @@ gulp.task("rename",function(){
     })
 })
 
+gulp.task('watchcss', function () {
+    gulp.watch('src/css/**/*.css', function (event) {
+        var paths = watchPath(event, 'src/', 'dist/')
 
-/*
-gulp.task("default",function(){
-    gulp.watch("src/js/!**!/!*.js",["uglify"]);
+        gulp.src(paths.srcPath)
+            .pipe(sourcemaps.init())
+            .pipe(minifycss())
+            .pipe(sourcemaps.write('./'))
+            .pipe(gulp.dest(paths.distDir))
+    })
+})
+
+//在 watchcss 任务中加入 autoprefixer:
+/*gulp.task('watchcss', function () {
+    gulp.watch('src/css/!**!/!*.css', function (event) {
+        var paths = watchPath(event, 'src/', 'dist/')
+
+        //在 watchcss 任务中加入 autoprefixer:
+        gulp.src(paths.srcPath)
+            .pipe(sourcemaps.init())
+            .pipe(autoprefixer({
+                browsers: 'last 2 versions'
+            }))
+            .pipe(minifycss())
+            .pipe(sourcemaps.write('./'))
+            .pipe(gulp.dest(paths.distDir))
+    })
 })*/
+
+
+
+ 
 
 
 

@@ -1,0 +1,1 @@
+{"version":3,"sources":["import.less","less1.less"],"names":[],"mappings":"AACA,UCDA,QAEQ,MAAA","file":"import.css","sourcesContent":["@import \"less1.less\";\r\n.import{\r\n    a{\r\n        color:red;\r\n    }\r\n}",".less{\r\n    a{\r\n        color:red;\r\n    }\r\n}"]}

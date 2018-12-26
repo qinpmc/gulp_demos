@@ -7,9 +7,9 @@ var sourcemaps = require('gulp-sourcemaps');
 var rename = require("gulp-rename");
 var less = require('gulp-less');
 var minifycss = require('gulp-minify-css');
-var autoprefixer = require('autoprefixer');
+var autoprefixer = require('gulp-autoprefixer');
 var imagemin = require('gulp-imagemin');
-var sass = require('gulp-ruby-sass');
+var sass = require('gulp-sass');
 
 
 
@@ -81,7 +81,7 @@ gulp.task("rename",function(){
     })
 })
 
-gulp.task('watchcss', function () {
+gulp.task('watchcss1', function () {
     gulp.watch('src/css/**/*.css', function (event) {
         var paths = watchPath(event, 'src/', 'dist/')
 
@@ -94,21 +94,21 @@ gulp.task('watchcss', function () {
 })
 
 //在 watchcss 任务中加入 autoprefixer:
-/*gulp.task('watchcss', function () {
-    gulp.watch('src/css/!**!/!*.css', function (event) {
+gulp.task('watchcss', function () {
+    gulp.watch('src/css/**/*.css', function (event) {
         var paths = watchPath(event, 'src/', 'dist/')
-
+		console.log(event);
         //在 watchcss 任务中加入 autoprefixer:
         gulp.src(paths.srcPath)
             .pipe(sourcemaps.init())
-            .pipe(autoprefixer({
-                browsers: 'last 2 versions'
+			.pipe(autoprefixer({
+              browsers: 'last 2 versions'
             }))
             .pipe(minifycss())
             .pipe(sourcemaps.write('./'))
             .pipe(gulp.dest(paths.distDir))
     })
-})*/
+})
 
 
 gulp.task('watchless', function () {
@@ -120,9 +120,6 @@ gulp.task('watchless', function () {
         var combined = combiner.obj([
             gulp.src(paths.srcPath),
             sourcemaps.init(),
-            autoprefixer({
-              browsers: 'last 2 versions'
-            }),
             less(),
             minifycss(),
             sourcemaps.write('./'),
@@ -132,25 +129,53 @@ gulp.task('watchless', function () {
     })
 })
 
+gulp.task('lesscss', function () {
+ var combined = combiner.obj([
+            gulp.src('src/less/**/*.less'),
+            sourcemaps.init(),
+            //autoprefixer({
+            // browsers: 'last 2 versions'
+            //}),
+            less(),
+            minifycss(),
+            sourcemaps.write('./'),
+            gulp.dest('dist/css/')
+        ])
+        combined.on('error', handleError)
+})
+
+
 gulp.task('watchsass',function () {
-    gulp.watch('src/sass/**/*', function (event) {
+    gulp.watch('src/sass/**/*.scss', function (event) {
         var paths = watchPath(event, 'src/sass/', 'dist/css/')
 
 		gutil.log(gutil.colors.green(event.type) + ' ' + paths.srcPath)
         gutil.log('Dist ' + paths.distPath)
-        sass(paths.srcPath)
-            .on('error', function (err) {
-                console.error('Error!', err.message);
-            })
+        gulp.src(paths.srcPath)
+			.pipe(sass().on('error', function (err) {
+				console.error('Error!', err.message);
+				}))
             .pipe(sourcemaps.init())
             .pipe(minifycss())
-            .pipe(autoprefixer({
-              browsers: 'last 2 versions'
-            }))
+            //.pipe(autoprefixer({
+            //  browsers: 'last 2 versions'
+            //}))
             .pipe(sourcemaps.write('./'))
             .pipe(gulp.dest(paths.distDir))
     })
 });
+
+gulp.task('sasscss', function () {
+        gulp.src('src/sass/**/*.scss')
+		.pipe(sass().on('error', function (err) {
+				console.error('Error!', err.message);
+				}))
+			.pipe(sourcemaps.init())
+            .pipe(minifycss())
+            .pipe(sourcemaps.write('./'))				
+        .pipe(gulp.dest('dist/css'))
+})
+
 
 
 gulp.task('watchimage', function () {
@@ -168,13 +193,23 @@ gulp.task('watchimage', function () {
     })
 });
 
-
+ 
+//gulp.task('imagemin', function () {
+// 
+//
+//        gulp.src("src/images/**/*")
+//            .pipe(imagemin({
+//                progressive: true
+//            }))
+//            .pipe(gulp.dest("dist/images"))
+//});
+ 
 gulp.task('watchcopy', function () {
-    gulp.watch('src/fonts/**/*', function (event) {
-        var paths = watchPath(event)
+    gulp.watch('src/fonts/**/*.txt', function (event) {
+        var paths = watchPath(event,'src/',"fontscopy")
 
-		gutil.log(gutil.colors.green(event.type) + ' ' + paths.srcPath)
-        gutil.log('Dist ' + paths.distPath)
+		gutil.log('------' + paths.srcPath)
+        gutil.log('******' + paths.distPath)
 
         gulp.src(paths.srcPath)
             .pipe(gulp.dest(paths.distDir))

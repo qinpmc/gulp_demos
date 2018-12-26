@@ -3,5 +3,5 @@ var log = function (msg) {
     console.log(msg)
     console.log('--------');
 }
-log({a:1})
+//log({a:1})
 log('gulp-book') ;
